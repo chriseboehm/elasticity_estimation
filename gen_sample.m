@@ -6,8 +6,8 @@
 
 clear all
 
-global mu alpha om psi phi_i nu_i w_tm1 R_tm1 pnJ_tm1_i pJ_tm1_i x_tm1_i ...
-    px_tm1_i int_agg prod_fn
+global mu alpha epsi om psi phi_i nu_i w_tm1 R_tm1 pnJ_tm1_i pJ_tm1_i x_tm1_i ...
+    int_agg prod_fn
 
 % Options
 
@@ -20,6 +20,7 @@ mu = 0.5;
 alpha = 1/3;
 om = 0.2;
 psi = 0.1;
+epsi = 10;
 
 phi_i = 1;          % later this may vary by firm
 nu_i = 0.5;         % later this may vary by firm
@@ -43,35 +44,41 @@ R_tm1 = 1;
 % the size of the firm will not be pinned down. For that reason, I will fix
 % capital as an input.
 
-N = 500;        % sample size
+N = 200;        % sample size
 
 x_tm1     = 1+rand(N,1);
 pnJ_tm1   = 1+rand(N,1);      
 pJ_tm1    = 1+rand(N,1);  
 
-px_tm1    = (mu^psi*((R_tm1./alpha).^alpha.*(w_tm1./(1-alpha)).^(1-alpha)).^(1-psi) + ...
-    (1-mu)^psi.*((nu_i.^om.*pnJ_tm1.^(1-om)+(1-nu_i).^om.*pJ_tm1.^(1-om) ).^(1/(1-om))) ...
-    .^(1-psi) ).^(1/(1-psi));
+% px_tm1    = (mu^psi*((R_tm1./alpha).^alpha.*(w_tm1./(1-alpha)).^(1-alpha)).^(1-psi) + ...
+%     (1-mu)^psi.*((nu_i.^om.*pnJ_tm1.^(1-om)+(1-nu_i).^om.*pJ_tm1.^(1-om) ).^(1/(1-om))) ...
+%     .^(1-psi) ).^(1/(1-psi));
 
 K_tm1     = zeros(N,1);
 L_tm1     = zeros(N,1);
 mnJ_tm1   = zeros(N,1);
 mJ_tm1    = zeros(N,1);
+px_tm1    = zeros(N,1);  
 
-startval = [1,1,1,1];
+startval = [1,1,1,1,1];
 
+
+tic
 for i=1:N
+    
     x_tm1_i = x_tm1(i);
     pnJ_tm1_i = pnJ_tm1(i);
     pJ_tm1_i = pJ_tm1(i);
-    px_tm1_i = px_tm1(i);
     sample = fsolve('foc_obj',startval);
     K_tm1(i) = sample(1);
     L_tm1(i) = sample(2);
     mnJ_tm1(i) = sample(3);
     mJ_tm1(i) = sample(4);
-    %x_tm1(i) = sample(5);
+    px_tm1(i) = sample(5);
+
 end
+toc
+
 
 % Our proxy with north american exports
 
@@ -103,7 +110,7 @@ mnJ_t   = mnJ_tm1;
 mJ_t    = (0.5 + 0.5.*rand(N,1)).*mJ_tm1;
 x_t     = prod_fn(K_t,L_t,mnJ_t,mJ_t);
 
-VNAX_t  = kappa_i.*px_t.*x_t + 0.05.*randn(N,1);
+VNAX_t  = kappa_i.*px_t.*x_t + 0.20.*randn(N,1);
 VmJ_t   = pJ_t.*mJ_t;
 VmnJ_t  = pnJ_t.*mnJ_t;
 

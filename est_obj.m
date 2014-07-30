@@ -3,10 +3,10 @@ function f = est_obj(args)
 global K_tm1 L_tm1 VNAX_tm1 VmJ_tm1 VmnJ_tm1 pnJ_tm1 pJ_tm1 px_tm1 ...
     K_t L_t VNAX_t VmJ_t VmnJ_t pnJ_t pJ_t px_t
 
-mu  = args(1);
-% mu  = 0.5;
-om  = args(2);
-psi = args(3);
+% mu  = args(1);
+mu  = 0.5; %+0.2
+om  = args(1);
+psi = args(2);
 
 alpha = 1/3;
 

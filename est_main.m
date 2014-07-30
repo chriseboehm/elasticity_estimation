@@ -17,11 +17,11 @@ load('sample.mat')
 % om = 0.2;
 % psi = 0.1;
 
-mu0  = 0.5;
+%mu0  = 0.5;
 om0  = 0.3;
 psi0 = 0.3;
 
-startval = [mu0 om0 psi0];
+startval = [om0 psi0]; %[mu0 om0 psi0];
 
 theta = fmincon('est_obj',startval,[],[],[],[],[0 0 0],[1 10 10]);
 
